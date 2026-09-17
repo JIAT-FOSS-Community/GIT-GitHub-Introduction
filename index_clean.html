@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to Git &amp; GitHub — JIAT FOSS Community</title>
+<meta name="description" content="Beginner-friendly introduction to Git and GitHub for the JIAT FOSS Community, presented by Charaka Hashan Amarasekara. September 13, 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<style>
+
+:root {
+  --bg: #FAF6F0;
+  --text-main: #1B2A47;
+  --text-muted: #5C3D24;
+  --accent: #FF6B35;
+  --accent-alt: #4A6B36;
+  --border: #E8E0D5;
+  --card-bg: #FFFFFF;
+  --green: #4A6B36;
+  --amber: #FFD166;
+  --purple: #B57EDC;
+  --cyan: #70D6FF;
+  
+  --term-bg: #1B2A47;
+  --term-h: #243459;
+  --term-bdr: #111827;
+  
+  --ff-head: 'Outfit', -apple-system, sans-serif;
+  --ff-body: 'Inter', -apple-system, sans-serif;
+  --ff-code: 'Fira Code', 'SFMono-Regular', monospace;
+  --r: 8px;
+  --r-s: 6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;font-family:var(--ff-body);background:#1B2A47;color:var(--text-main);}
+button{font-family:inherit;}
+.wrapper{display:flex;align-items:center;justify-content:center;width:100vw;height:100vh;}
+.viewport{position:relative;width:1200px;height:675px;overflow:hidden;border-radius:12px;box-shadow:0 10px 15px -3px rgba(0,0,0,0.3);transform-origin:center center;background:var(--bg);border:1px solid var(--border);}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;background:var(--bg);opacity:0;transform:translateX(40px);transition:opacity .3s ease,transform .3s ease;pointer-events:none;overflow:hidden;}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all;}
+.slide.exit-l{opacity:0;transform:translateX(-40px);}
+/* Header */
+.sh{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border);background:var(--card-bg);flex-shrink:0;}
+.sh-brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:16px;color:var(--text-main);}
+.sh-label{font-size:13px;font-weight:700;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;}
+/* Body */
+.sb{flex:1;display:flex;flex-direction:column;padding:32px 48px;overflow:hidden;}
+.sb.row{flex-direction:row;align-items:stretch;gap:32px;}
+.col{flex:1;display:flex;flex-direction:column;}
+/* Typography */
+.title{font-family:var(--ff-head);font-size:38px;font-weight:800;color:var(--text-main);line-height:1.2;margin-bottom:8px;letter-spacing:-0.02em;}
+.title .a{color:var(--accent);} .title .ag{color:var(--green);}
+.subtitle{font-size:16px;color:var(--text-muted);margin-bottom:24px;line-height:1.5;}
+.lead{font-size:16px;color:var(--text-main);line-height:1.6;}
+.sh3{font-size:14px;font-weight:600;color:var(--text-main);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.05em;}
+.hl-v{color:var(--accent);font-weight:700;}
+/* Grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+/* Card */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 12px;border-radius:100px;}
+.ba{background:rgba(255,107,53,0.1);color:var(--accent);border:1px solid rgba(255,107,53,0.3);}
+.bg{background:rgba(74,107,54,0.1);color:var(--green);border:1px solid rgba(74,107,54,0.3);}
+.bc{background:var(--card-bg);color:var(--text-main);border:1px solid var(--border);}
+.bv{background:rgba(181,126,220,0.1);color:var(--purple);border:1px solid rgba(181,126,220,0.3);}
+.bn{background:rgba(255,209,102,0.1);color:#B45309;border:1px solid rgba(255,209,102,0.4);}
+/* Steps */
+.steps{list-style:none;display:flex;flex-direction:column;gap:16px;}
+.step{display:flex;gap:16px;align-items:flex-start;}
+.snum{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+.scnt{flex:1;} .stitle{font-weight:600;font-size:16px;color:var(--text-main);margin-bottom:4px;}
+.sdesc{font-size:14px;color:var(--text-muted);line-height:1.5;}
+.scode{display:inline-block;font-family:var(--ff-code);font-size:13px;background:var(--term-bg);border:1px solid var(--term-bdr);padding:3px 8px;border-radius:4px;margin-top:4px;}
+/* Callout */
+.callout{display:flex;gap:12px;padding:16px;border-radius:var(--r);font-size:14px;line-height:1.5;border:1px solid var(--border);background:var(--card-bg);}
+.ct{border-left:4px solid var(--accent);}
+.ci{border-left:4px solid var(--cyan);}
+.cw{border-left:4px solid var(--amber);}
+.cl{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;}
+/* Terminal */
+.term{background:var(--term-bg);border:1px solid var(--term-bdr);border-radius:var(--r);font-family:var(--ff-code);overflow:hidden;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);}
+.th{background:var(--term-h);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--term-bdr);}
+.tdots{display:flex;gap:6px;} .tdot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#FF5F56;} .dy{background:#FFBD2E;} .dg{background:#27C93F;}
+.ttitle{font-size:12px;color:#8B949E;font-family:var(--ff-body);font-weight:600;}
+.tcopy{display:flex;align-items:center;gap:6px;background:transparent;border:none;color:#8B949E;font-size:12px;cursor:pointer;transition:color .2s;font-family:var(--ff-body);font-weight:500;}
+.tcopy:hover{}
+.tb{padding:16px;font-size:13px;line-height:1.6;color:#E6EDF3;}
+.tl{display:flex;align-items:flex-start;}
+.tp{color:var(--accent);margin-right:8px;user-select:none;flex-shrink:0;}
+.tc{color:#E6EDF3;} .tf{color:var(--cyan);} .ts{color:var(--amber);}
+.tcm{color:#8B949E;font-style:italic;} .tout{color:#8B949E;}
+.tok{color:var(--green);} .terr{color:#FF5F56;} .tgap{height:8px;}
+/* Tabs */
+.tab-bar{display:flex;gap:8px;border-bottom:1px solid var(--border);padding-bottom:0;margin-bottom:20px;}
+.tab-btn{display:flex;align-items:center;gap:8px;padding:12px 16px;border:none;background:transparent;font-family:var(--ff-body);font-size:15px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;}
+.tab-btn:hover{color:var(--text-main);}
+.tab-btn.on{color:var(--accent);border-bottom-color:var(--accent);}
+.tab-panel{display:none;} .tab-panel.on{display:block;}
+/* Auth cards */
+.amc{border:1px solid var(--border);border-radius:var(--r);padding:20px;background:var(--card-bg);position:relative;transition:all .2s;}
+.amc:hover{border-color:var(--accent);box-shadow:0 4px 12px rgba(27,42,71,0.1);}
+.amc.rec{border-color:var(--accent);background:rgba(255,107,53,0.05);}
+.amc.rec::before{content:'RECOMMENDED';position:absolute;top:-10px;right:16px;font-size:10px;font-weight:700;letter-spacing:.05em;background:var(--accent);padding:2px 8px;border-radius:100px;}
+.ami{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;background:var(--bg);border:1px solid var(--border);}
+.amt{font-family:var(--ff-head);font-size:18px;font-weight:700;color:var(--text-main);margin-bottom:8px;}
+.amd{font-size:14px;color:var(--text-muted);line-height:1.5;}
+/* Compare */
+.cc{flex:1;border-radius:var(--r);padding:24px;border:1px solid var(--border);}
+.cc-git{background:var(--card-bg);}
+.cc-gh{background:rgba(255,107,53,0.05);border-color:rgba(255,107,53,0.2);}
+.cc-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.cc-list li{display:flex;align-items:flex-start;gap:10px;font-size:15px;line-height:1.5;color:var(--text-main);}
+.cc-list li::before{content:'•';flex-shrink:0;font-weight:700;color:var(--text-muted);}
+.cc-git .cc-list li::before{color:var(--amber);} .cc-gh .cc-list li::before{color:var(--accent);}
+/* Checklist */
+.chklist{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.chi{display:flex;align-items:center;gap:16px;padding:14px 16px;border-radius:var(--r);border:1px solid var(--border);background:var(--card-bg);cursor:pointer;transition:all .2s;font-size:15px;font-weight:600;color:var(--text-main);user-select:none;}
+.chi:hover{border-color:var(--accent);}
+.chi.done{background:rgba(74,107,54,0.1);border-color:rgba(74,107,54,0.3);color:var(--green);text-decoration:line-through;}
+.cicon{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.chi.done .cicon{background:var(--green);border-color:var(--green);}
+/* UI chrome */
+#pbar{position:fixed;top:0;left:0;right:0;height:4px;background:var(--border);z-index:1001;}
+#pfill{height:100%;background:var(--accent);transition:width .3s ease;}
+#sctr{position:fixed;top:16px;right:24px;font-family:var(--ff-code);font-size:13px;font-weight:600;color:var(--text-muted);z-index:1000;background:var(--card-bg);padding:4px 12px;border-radius:100px;border:1px solid var(--border);}
+#fsbtn{position:fixed;top:16px;left:24px;background:var(--card-bg);border:1px solid var(--border);border-radius:100px;color:var(--text-muted);padding:6px 14px;font-size:12px;cursor:pointer;z-index:1000;display:flex;align-items:center;gap:6px;font-family:var(--ff-head);font-weight:600;transition:all .2s;}
+#fsbtn:hover{color:var(--accent);border-color:var(--accent);}
+.navbar{position:fixed;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:16px;padding:16px;z-index:1000;}
+.nbtn{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:var(--card-bg);color:var(--text-main);cursor:pointer;transition:all .2s;}
+.nbtn:hover{background:var(--bg);color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 12px rgba(27,42,71,0.1);}
+.nbtn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
+.sdots{display:flex;gap:8px;align-items:center;}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s;}
+.sdot.on{width:24px;border-radius:4px;background:var(--accent);}
+#kbhint{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--text-muted);z-index:999;font-family:var(--ff-body);font-weight:600;white-space:nowrap;background:rgba(255,255,255,0.95);padding:6px 16px;border-radius:100px;border:1px solid var(--border);box-shadow:0 4px 12px rgba(27,42,71,0.1);}
+.sep{height:1px;background:var(--border);margin:24px 0;}
+.ibox{display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-s);flex-shrink:0;}
+/* Utilities */
+.mt-auto{margin-top:auto;} .mt8{margin-top:8px;} .mt12{margin-top:12px;} .mt14{margin-top:16px;} .mt16{margin-top:20px;}
+.ga8{gap:8px;} .ga10{gap:12px;} .ga12{gap:16px;} .ga14{gap:20px;} .ga16{gap:24px;} .ga24{gap:32px;} .ga28{gap:40px;}
+.dfc{display:flex;flex-direction:column;} .dfi{display:flex;align-items:center;}
+.small{font-size:13px;color:var(--text-muted);line-height:1.6;}
+/* Title slides */
+#s1,#s19{background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+.t-main{font-family:var(--ff-head);font-size:64px;font-weight:900;color:var(--text-main);line-height:1.1;letter-spacing:-0.02em;}
+.t-chip{display:flex;align-items:center;gap:8px;background:var(--card-bg);border:1px solid var(--border);border-radius:6px;padding:8px 16px;font-size:14px;color:var(--text-main);font-weight:600;}
+.cauldron{display:none;} /* Removed */
+/* Workflow */
+.wf-box{text-align:center;padding:24px;border-radius:var(--r);min-width:160px;background:var(--card-bg);border:1px solid var(--border);box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);}
+.wf-arrow{display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 12px;}
+.wf-cmd{font-family:var(--ff-code);font-size:12px;padding:4px 12px;border-radius:100px;background:var(--term-bg);border:1px solid var(--term-bdr);}
+/* Commit types */
+.ctrow{display:flex;align-items:center;gap:12px;padding:8px 16px;border-radius:var(--r-s);margin-bottom:8px;background:var(--card-bg);border:1px solid var(--border);}
+.cttag{font-family:var(--ff-code);font-size:13px;font-weight:700;min-width:60px;color:var(--text-main);}
+/* Hcard */
+.hcard{background:var(--card-bg);border-radius:var(--r);padding:32px;color:var(--text-main);border:1px solid var(--border);}
+/* Celebrate */
+.celebrate-btn{padding:16px 40px;background:var(--accent);border:none;border-radius:100px;font-family:var(--ff-head);font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(255,107,53,0.3);}
+.celebrate-btn:hover{background:#E05A2A;transform:translateY(-2px);box-shadow:0 6px 16px rgba(255,107,53,0.4);}
+
+</style>
+</head>
+<body>
+<div id="pbar"><div id="pfill" style="width:5.26%"></div></div>
+<div id="sctr">1 / 19</div>
+<button id="fsbtn" onclick="toggleFS()">
+  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+  F &mdash; Fullscreen
+</button>
+<div class="wrapper"><div class="viewport" id="vp">
+
+<!-- S1 TITLE -->
+<div class="slide active" id="s1" data-n="1">
+<div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:40px 48px;text-align:center;">
+  <div style="margin-bottom:32px;">
+    <img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:80px; margin-bottom: 20px;">
+  </div>
+  <div style="display:flex;gap:12px;margin-bottom:24px;justify-content:center;">
+    <span class="badge ba">Git &amp; GitHub</span>
+    <span class="badge ba">Beginner Friendly</span>
+    <span class="badge ba">September 13, 2026</span>
+  </div>
+  <div class="t-main">Introduction to<br><span class="a">Git &amp; GitHub</span></div>
+  <div style="margin-top:24px;font-size:18px;color:var(--text-muted);line-height:1.6;max-width:600px;font-weight:500;">Your gateway to Hacktoberfest, open-source collaboration, and the global developer community.</div>
+  <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:40px;justify-content:center;">
+    <div class="t-chip"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Charaka Hashan Amarasekara</div>
+    <div class="t-chip"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>8:00 PM &ndash; 10:00 PM</div>
+  </div>
+  <div style="margin-top:48px;font-size:14px;color:var(--text-muted);font-weight:600;">Press Space or &rarr; to begin</div>
+</div>
+</div>
+
+<!-- S2 VERSION CONTROL -->
+<div class="slide" id="s2" data-n="2">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 1 &mdash; Context</div></div>
+<div class="sb">
+  <div class="title">What is <span class="a">Version Control?</span></div>
+  <div class="subtitle">The problem every developer has faced &mdash; and the solution.</div>
+  <div class="grid-2" style="flex:1;gap:16px;">
+    <div class="card" style="background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.2);">
+      <div class="dfi ga10" style="margin-bottom:14px;"><div class="ibox" style="width:34px;height:34px;background:rgba(255,107,53,.1);"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FF6B35" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="sh3" style="margin:0;">Without Version Control</div></div>
+      <div class="dfc ga10">
+        <div style="background:rgba(255,107,53,.06);border:1px solid rgba(255,107,53,.15);border-radius:6px;padding:10px 14px;font-family:var(--ff-code);font-size:12px;line-height:2;color:rgba(27,42,71,.75);">project_final.zip<br>project_final_v2.zip<br>project_ACTUAL_final.zip<br>project_USE_THIS_ONE.zip<br>project_FINAL_final_v3_real.zip</div>
+        <p class="small">No way to know <strong>what changed</strong>, <strong>when</strong>, or <strong>why</strong>.</p>
+        <p class="small">One accidental overwrite = <strong>everything lost</strong>.</p>
+        <p class="small">Collaboration = emailing zip files back and forth.</p>
+      </div>
+    </div>
+    <div class="card" style="background:rgba(74,107,54,.05);border-color:rgba(74,107,54,.25);">
+      <div class="dfi ga10" style="margin-bottom:14px;"><div class="ibox" style="width:34px;height:34px;background:rgba(74,107,54,.12);"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4A6B36" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="sh3" style="margin:0;color:var(--green);">With Git</div></div>
+      <div class="dfc ga10">
+        <div style="background:rgba(74,107,54,.06);border:1px solid rgba(74,107,54,.15);border-radius:6px;padding:10px 14px;">
+          <div class="dfi ga10" style="margin-bottom:7px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;"></div><span style="font-family:var(--ff-code);font-size:12px;">feat: add login page</span></div>
+          <div class="dfi ga10" style="margin-bottom:7px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;"></div><span style="font-family:var(--ff-code);font-size:12px;">fix: resolve null pointer</span></div>
+          <div class="dfi ga10"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;"></div><span style="font-family:var(--ff-code);font-size:12px;">docs: update README</span></div>
+        </div>
+        <p class="small">Every change tracked with <strong>who, what, and when</strong>.</p>
+        <p class="small">Made a mistake? <strong>Roll back instantly to any point.</strong></p>
+        <p class="small">Collaborate without overwriting each other's work.</p>
+      </div>
+    </div>
+  </div>
+  <div class="callout ci mt16"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--cyan-d)" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div><div class="cl" style="color:var(--cyan-d);">Think of it as</div>A <strong>time machine for your code</strong> &mdash; go back to any point, see exactly what changed, and collaborate without stepping on each other's work.</div></div>
+</div>
+</div>
+
+<!-- S3 GIT VS GITHUB -->
+<div class="slide" id="s3" data-n="3">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 1 &mdash; Context</div></div>
+<div class="sb row" style="padding:28px 36px;gap:20px;">
+  <div class="dfc" style="min-width:190px;justify-content:center;">
+    <div class="title" style="font-size:30px;">Git <span style="color:rgba(27,42,71,.22);">vs</span><br><span class="a">GitHub</span></div>
+    <div class="subtitle" style="margin-bottom:0;">Two different things &mdash; working together.</div>
+    <div class="sep"></div>
+    <div class="callout ct" style="margin-top:0;"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4A6B36" stroke-width="2" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div style="font-size:12px;"><strong>"Git is the engine.<br>GitHub is the road."</strong></div></div>
+  </div>
+  <div class="cc cc-git">
+    <div class="dfi ga12" style="margin-bottom:14px;"><div style="width:46px;height:46px;background:rgba(255,107,53,.14);border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF6B35" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div><div><div style="font-family:var(--ff-head);font-size:24px;font-weight:800;">Git</div><div style="font-size:12px;color:rgba(255,255,255,.45);">Local version control tool</div></div></div>
+    <ul class="cc-list"><li>Runs entirely on <strong>your computer</strong></li><li>Tracks file changes over time</li><li>Free, open source, works offline</li><li>Created by Linus Torvalds in 2005</li><li>Used via terminal / command line</li></ul>
+    <div style="margin-top:14px;padding:8px 12px;background:rgba(255,255,255,.04);border-radius:6px;font-family:var(--ff-code);font-size:11.5px;color:rgba(255,255,255,.45);">Installed on: <span style="color:var(--amber);">your machine</span></div>
+  </div>
+  <div class="cc cc-gh">
+    <div class="dfi ga12" style="margin-bottom:14px;"><div style="width:46px;height:46px;background:rgba(27,42,71,.08);border-radius:10px;display:flex;align-items:center;justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1B2A47" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></div><div><div style="font-family:var(--ff-head);font-size:24px;font-weight:800;">GitHub</div><div style="font-size:12px;color:rgba(27,42,71,.45);">Cloud hosting for Git repos</div></div></div>
+    <ul class="cc-list"><li>Website that stores Git repos <strong>online</strong></li><li>Enables global team collaboration</li><li>Pull Requests, Issues, Actions</li><li>Home of <strong>100M+ open source projects</strong></li><li>Where Hacktoberfest happens</li></ul>
+    <div style="margin-top:14px;padding:8px 12px;background:rgba(27,42,71,.05);border-radius:6px;font-family:var(--ff-code);font-size:11.5px;color:rgba(27,42,71,.45);">Hosted at: <span style="color:var(--green);font-weight:700;">github.com</span></div>
+  </div>
+</div>
+</div>
+
+<!-- S4 ACCOUNT -->
+<div class="slide" id="s4" data-n="4">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 2 &mdash; Setup</div></div>
+<div class="sb row ga16">
+  <div class="col">
+    <div class="title" style="font-size:30px;">Creating Your<br><span class="ag">GitHub Account</span></div>
+    <div class="subtitle">Your identity in the open-source world.</div>
+    <ol class="steps">
+      <li class="step"><div class="snum">1</div><div class="scnt"><div class="stitle">Visit github.com</div><div class="sdesc">Click &ldquo;Sign up&rdquo; &mdash; top right corner</div></div></li>
+      <li class="step"><div class="snum">2</div><div class="scnt"><div class="stitle">Enter your email address</div><div class="sdesc">Use an email you check regularly</div></div></li>
+      <li class="step"><div class="snum">3</div><div class="scnt"><div class="stitle">Create a strong password</div><div class="sdesc">15+ characters recommended</div></div></li>
+      <li class="step"><div class="snum">4</div><div class="scnt"><div class="stitle">Choose your username</div><div class="sdesc">This is your developer brand &mdash; choose wisely</div></div></li>
+      <li class="step"><div class="snum">5</div><div class="scnt"><div class="stitle">Verify email and complete setup</div><div class="sdesc">Check your inbox for the verification link</div></div></li>
+    </ol>
+  </div>
+  <div class="col ga14">
+    <div class="card" style="background:rgba(27,42,71,.03);">
+      <div class="dfi ga8" style="margin-bottom:12px;"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFD166" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span style="font-size:12.5px;font-weight:700;">Username Best Practices</span></div>
+      <div class="dfc" style="gap:7px;font-size:12.5px;">
+        <div class="dfi ga8" style="color:var(--green);"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Use your real name or a consistent handle</div>
+        <div class="dfi ga8" style="color:var(--green);"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Lowercase with hyphens &mdash; e.g. charaka-dev</div>
+        <div class="dfi ga8" style="color:var(--green);"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Short and memorable &mdash; you&apos;ll type it constantly</div>
+        <div class="dfi ga8" style="color:rgba(255,107,53,.85);"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Avoid random numbers like dev123456</div>
+      </div>
+    </div>
+    <div class="callout cw"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" style="flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><div><div class="cl" style="color:var(--amber);">Important</div>Your username appears on every contribution you ever make. Pick something you&apos;ll be proud of long-term.</div></div>
+    <div class="callout ct"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><div>Already have an account? Verify email is confirmed and 2FA is enabled in <strong>Settings &rarr; Password and authentication</strong>.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- S5 INSTALL GIT -->
+<div class="slide" id="s5" data-n="5">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 2 &mdash; Setup</div></div>
+<div class="sb">
+  <div class="title">Installing <span class="a">Git</span></div>
+  <div class="subtitle">Pick your operating system below.</div>
+  <div class="tab-bar">
+    <button class="tab-btn on" onclick="sw('inst','win')" id="inst-t-win"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>Windows</button>
+    <button class="tab-btn" onclick="sw('inst','mac')" id="inst-t-mac"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M3 20a9 9 0 0 1 18 0"/></svg>macOS</button>
+    <button class="tab-btn" onclick="sw('inst','lnx')" id="inst-t-lnx"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="11" r="5"/><path d="M3 20a9 9 0 0 1 18 0"/></svg>Linux</button>
+  </div>
+  <!-- Windows -->
+  <div class="tab-panel on" id="inst-p-win">
+    <div class="grid-2 ga16">
+      <div>
+        <div class="sh3">GUI Installer &mdash; git-scm.com (Recommended)</div>
+        <ol class="steps">
+          <li class="step"><div class="snum" style="background:var(--amber);">1</div><div class="scnt"><div class="stitle">Download from git-scm.com</div><div class="sdesc">Click the large &ldquo;Download for Windows&rdquo; button</div></div></li>
+          <li class="step"><div class="snum" style="background:var(--amber);">2</div><div class="scnt"><div class="stitle">Run the .exe installer</div><div class="sdesc">Click through with all default options</div></div></li>
+          <li class="step"><div class="snum" style="background:var(--amber);">3</div><div class="scnt"><div class="stitle">Default Editor &mdash; choose VS Code</div><div class="sdesc">If you have VS Code installed, select it</div></div></li>
+          <li class="step"><div class="snum" style="background:var(--amber);">4</div><div class="scnt"><div class="stitle">Open &ldquo;Git Bash&rdquo; when done</div><div class="sdesc">This is your Git terminal on Windows</div></div></li>
+        </ol>
+      </div>
+      <div class="dfc ga12">
+        <div class="sh3">Verify Installation</div>
+        <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Git Bash</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb"><div class="tl"><span class="tp">$</span><span class="tc"> git <span class="tf">--version</span></span></div><div class="tl"><span class="tok">git version 2.46.0.windows.1</span></div></div></div>
+        <div class="callout ct small"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div>Any version number = Git is installed. Exact version doesn&apos;t matter.</div></div>
+      </div>
+    </div>
+  </div>
+  <!-- macOS -->
+  <div class="tab-panel" id="inst-p-mac">
+    <div class="grid-2 ga14">
+      <div>
+        <div class="sh3">Option A &mdash; Homebrew (Recommended)</div>
+        <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Terminal</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:12px;"><div class="tl"><span class="tcm"># Install Homebrew first (if needed)</span></div><div class="tl"><span class="tp">$</span><span class="tc"> /bin/bash -c "$(curl -fsSL https://brew.sh/install.sh)"</span></div><div class="tgap"></div><div class="tl"><span class="tp">$</span><span class="tc"> brew install git</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git <span class="tf">--version</span></span></div></div></div>
+      </div>
+      <div>
+        <div class="sh3">Option B &mdash; Xcode Command Line Tools</div>
+        <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Terminal</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:12px;"><div class="tl"><span class="tp">$</span><span class="tc"> xcode-select <span class="tf">--install</span></span></div><div class="tl"><span class="tout">Popup appears &rarr; click &ldquo;Install&rdquo;</span></div></div></div>
+        <div class="callout ci mt12 small"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--cyan-d)" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div>GUI installer also at <strong>git-scm.com/download/mac</strong> if preferred.</div></div>
+      </div>
+    </div>
+  </div>
+  <!-- Linux -->
+  <div class="tab-panel" id="inst-p-lnx">
+    <div class="grid-3 ga12">
+      <div><div class="sh3" style="font-size:13px;">Ubuntu / Debian</div><div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Terminal</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:12px;"><div class="tl"><span class="tp">$</span><span class="tc"> sudo apt update</span></div><div class="tl"><span class="tp">$</span><span class="tc"> sudo apt install <span class="tf">-y</span> git</span></div></div></div></div>
+      <div><div class="sh3" style="font-size:13px;">Fedora / RHEL</div><div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Terminal</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:12px;"><div class="tl"><span class="tp">$</span><span class="tc"> sudo dnf install <span class="tf">-y</span> git</span></div></div></div></div>
+      <div><div class="sh3" style="font-size:13px;">Arch Linux</div><div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Terminal</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:12px;"><div class="tl"><span class="tp">$</span><span class="tc"> sudo pacman <span class="tf">-S</span> git</span></div></div></div></div>
+    </div>
+    <div class="term mt14"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Verify &mdash; any distro</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:12.5px;"><div class="tl"><span class="tp">$</span><span class="tc"> git <span class="tf">--version</span></span></div><div class="tl"><span class="tok">git version 2.43.0</span></div></div></div>
+  </div>
+</div>
+</div>
+
+<!-- S6 CONFIG -->
+<div class="slide" id="s6" data-n="6">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 2 &mdash; Setup</div></div>
+<div class="sb row ga28">
+  <div class="col" style="max-width:310px;">
+    <div class="title" style="font-size:28px;">First-Time<br><span class="a">Git Config</span></div>
+    <div class="subtitle">Tell Git who you are &mdash; once, globally.</div>
+    <p class="lead mt8">Every commit is stamped with your name and email. This is how the open-source community knows <strong>who contributed what</strong>.</p>
+    <div class="callout cw mt14"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" style="flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><div><strong>Use the same email</strong> you registered on GitHub &mdash; this links commits to your profile!</div></div>
+  </div>
+  <div class="col ga12" style="justify-content:center;">
+    <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Git Bash / Terminal</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy All</button></div><div class="tb"><div class="tl"><span class="tcm"># Set your name</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git config <span class="tf">--global</span> user.name <span class="ts">"Your Full Name"</span></span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Set your email (must match GitHub)</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git config <span class="tf">--global</span> user.email <span class="ts">"you@example.com"</span></span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Set default branch name</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git config <span class="tf">--global</span> init.defaultBranch <span class="ts">main</span></span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Verify</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git config <span class="tf">--list</span></span></div><div class="tl"><span class="tout">user.name=Your Full Name</span></div><div class="tl"><span class="tout">user.email=you@example.com</span></div></div></div>
+    <div class="card small" style="background:rgba(74,107,54,.06);border-color:rgba(74,107,54,.2);">Saved in <code style="background:rgba(27,42,71,.06);padding:1px 6px;border-radius:3px;">~/.gitconfig</code> &mdash; do this <strong>once per machine</strong>.</div>
+  </div>
+</div>
+</div>
+
+<!-- S7 AUTH OVERVIEW -->
+<div class="slide" id="s7" data-n="7">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 3 &mdash; Authentication</div></div>
+<div class="sb">
+  <div class="title">Authentication &mdash; <span class="a">How GitHub Knows It&apos;s You</span></div>
+  <div class="subtitle">Three methods &mdash; today we go deep on SSH as the professional standard.</div>
+  <div class="grid-3" style="flex:1;gap:14px;margin-top:4px;">
+    <div class="amc"><div class="ami" style="background:rgba(112,214,255,.12);"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--cyan-d)" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div class="amt">HTTPS + PAT</div><div class="amd">Use a Personal Access Token as password when pushing. Generated from GitHub Settings. Simple but tokens expire.</div><div style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap;"><span class="badge bc" style="font-size:9.5px;">Simple setup</span><span class="badge bn" style="font-size:9.5px;">Token expires</span></div></div>
+    <div class="amc rec"><div class="ami" style="background:rgba(255,107,53,.1);"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="amt">SSH Keys</div><div class="amd">Generate a cryptographic key pair. Add public key to GitHub. No passwords ever again &mdash; the professional standard.</div><div style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap;"><span class="badge ba" style="font-size:9.5px;">Most secure</span><span class="badge bg" style="font-size:9.5px;">No passwords</span><span class="badge bg" style="font-size:9.5px;">Professional</span></div></div>
+    <div class="amc"><div class="ami" style="background:rgba(181,126,220,.12);"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--violet-d)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div><div class="amt">GitHub CLI</div><div class="amd">Run <code style="background:rgba(27,42,71,.06);padding:1px 5px;border-radius:3px;font-size:11px;">gh auth login</code> &mdash; guides you through browser-based authentication step by step.</div><div style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap;"><span class="badge bv" style="font-size:9.5px;">Easiest flow</span><span class="badge bn" style="font-size:9.5px;">Modern</span></div></div>
+  </div>
+  <div style="margin-top:14px;padding:11px 18px;background:rgba(255,107,53,.07);border:1.5px solid rgba(255,107,53,.2);border-radius:var(--r-s);display:flex;align-items:center;gap:11px;"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div style="font-size:12.5px;"><strong>Today&apos;s focus: SSH keys</strong> &mdash; once set up, you&apos;ll never enter a password for Git operations again.</div></div>
+</div>
+</div>
+
+<!-- S8 PAT -->
+<div class="slide" id="s8" data-n="8">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 3 &mdash; Authentication</div></div>
+<div class="sb row ga24">
+  <div class="col">
+    <div class="title" style="font-size:26px;">Method 1:<br><span class="ag">HTTPS + Personal Access Token</span></div>
+    <div class="subtitle" style="margin-bottom:14px;">A generated password from GitHub Settings.</div>
+    <ol class="steps">
+      <li class="step"><div class="snum">1</div><div class="scnt"><div class="stitle">GitHub Avatar &rarr; Settings</div></div></li>
+      <li class="step"><div class="snum">2</div><div class="scnt"><div class="stitle">Scroll to &ldquo;Developer Settings&rdquo;</div><div class="sdesc">Last item in the left sidebar</div></div></li>
+      <li class="step"><div class="snum">3</div><div class="scnt"><div class="stitle">Personal Access Tokens &rarr; Tokens (classic)</div><div class="sdesc">Click &ldquo;Generate new token (classic)&rdquo;</div></div></li>
+      <li class="step"><div class="snum">4</div><div class="scnt"><div class="stitle">Select scope: <span class="scode">repo</span></div><div class="sdesc">Full control of your repositories</div></div></li>
+      <li class="step"><div class="snum">5</div><div class="scnt"><div class="stitle">Copy the token immediately</div><div class="sdesc">You only see it once &mdash; save it securely</div></div></li>
+    </ol>
+  </div>
+  <div class="col ga14" style="justify-content:center;">
+    <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">When Git prompts you</div></div><div class="tb" style="font-size:12.5px;"><div class="tl"><span class="tp">$</span><span class="tc"> git push origin main</span></div><div class="tl"><span class="tout">Username: <span style="color:var(--gold);">charaka-dev</span></span></div><div class="tl"><span class="tout">Password: <span style="color:var(--gold);">ghp_xxXX...  (paste PAT here)</span></span></div><div class="tgap"></div><div class="tl"><span class="tok">Enumerating objects: 5, done.</span></div><div class="tl"><span class="tok">To https://github.com/charaka-dev/repo.git</span></div></div></div>
+    <div class="callout ci small"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--cyan-d)" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div>PATs expire &mdash; you need to regenerate periodically. This is why SSH keys are the better long-term solution.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- S9 SSH KEYS -->
+<div class="slide" id="s9" data-n="9">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 3 &mdash; Authentication</div></div>
+<div class="sb">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;"><div><div class="title" style="font-size:28px;">Method 2: <span class="a">SSH Key Authentication</span></div><div class="subtitle" style="margin-bottom:0;">Generate key pair &rarr; keep private key secret &rarr; add public key to GitHub.</div></div><span class="badge ba" style="font-size:11px;margin-top:4px;">Focus Method</span></div>
+  <div class="tab-bar">
+    <button class="tab-btn on" onclick="sw('ssh','win')" id="ssh-t-win"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>Windows (Git Bash)</button>
+    <button class="tab-btn" onclick="sw('ssh','mac')" id="ssh-t-mac"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M3 20a9 9 0 0 1 18 0"/></svg>macOS</button>
+    <button class="tab-btn" onclick="sw('ssh','lnx')" id="ssh-t-lnx"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="11" r="5"/><path d="M3 20a9 9 0 0 1 18 0"/></svg>Linux</button>
+  </div>
+  <!-- SSH Windows -->
+  <div class="tab-panel on" id="ssh-p-win">
+    <div class="grid-2 ga12">
+      <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Step 1 &mdash; Generate &amp; Config</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:11px;"><div class="tl"><span class="tcm"># Generate key (press Enter 2x when prompted)</span></div><div class="tl"><span class="tp">$</span><span class="tc"> ssh-keygen <span class="tf">-t</span> ed25519 <span class="tf">-C</span> <span class="ts">"you@email.com"</span> <span class="tf">-f</span> ~/.ssh/github_key</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Tell SSH to use it for GitHub</span></div><div class="tl"><span class="tp">$</span><span class="tc"> echo <span class="ts">"Host github.com"</span> &gt;&gt; ~/.ssh/config</span></div><div class="tl"><span class="tp">$</span><span class="tc"> echo <span class="ts">"  IdentityFile ~/.ssh/github_key"</span> &gt;&gt; ~/.ssh/config</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Copy public key to clipboard</span></div><div class="tl"><span class="tp">$</span><span class="tc"> cat ~/.ssh/github_key.pub | clip</span></div></div></div>
+      <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Step 2 &mdash; Add to GitHub &amp; Verify</div></div><div class="tb" style="font-size:11.5px;"><div class="tl"><span class="tcm"># GitHub: Settings &rarr; SSH and GPG Keys</span></div><div class="tl"><span class="tcm"># Click "New SSH key" &rarr; paste &rarr; Save</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Test the connection</span></div><div class="tl"><span class="tp">$</span><span class="tc"> ssh <span class="tf">-T</span> git@github.com</span></div><div class="tl"><span class="tok">Hi charaka-dev! You&apos;ve successfully</span></div><div class="tl"><span class="tok">authenticated, but GitHub does not</span></div><div class="tl"><span class="tok">provide shell access.</span></div></div></div>
+    </div>
+    <div class="callout ct mt12 small"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div><strong>| clip</strong> pipes the key to your clipboard &mdash; no need to open the file. Never share your private key <code style="background:rgba(27,42,71,.06);padding:1px 5px;border-radius:3px;">github_key</code> (no .pub).</div></div>
+  </div>
+  <!-- SSH macOS -->
+  <div class="tab-panel" id="ssh-p-mac">
+    <div class="grid-2 ga12">
+      <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Step 1 &mdash; Generate &amp; Config</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:11px;"><div class="tl"><span class="tcm"># Generate key (press Enter 2x when prompted)</span></div><div class="tl"><span class="tp">$</span><span class="tc"> ssh-keygen <span class="tf">-t</span> ed25519 <span class="tf">-C</span> <span class="ts">"you@email.com"</span> <span class="tf">-f</span> ~/.ssh/github_key</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Tell SSH to use it for GitHub</span></div><div class="tl"><span class="tp">$</span><span class="tc"> echo <span class="ts">"Host github.com"</span> &gt;&gt; ~/.ssh/config</span></div><div class="tl"><span class="tp">$</span><span class="tc"> echo <span class="ts">"  IdentityFile ~/.ssh/github_key"</span> &gt;&gt; ~/.ssh/config</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Copy public key to clipboard</span></div><div class="tl"><span class="tp">$</span><span class="tc"> pbcopy &lt; ~/.ssh/github_key.pub</span></div></div></div>
+      <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Step 2 &mdash; Add to GitHub &amp; Verify</div></div><div class="tb" style="font-size:11.5px;"><div class="tl"><span class="tcm"># GitHub: Settings &rarr; SSH and GPG Keys</span></div><div class="tl"><span class="tcm"># Click "New SSH key" &rarr; paste &rarr; Save</span></div><div class="tgap"></div><div class="tl"><span class="tp">$</span><span class="tc"> ssh <span class="tf">-T</span> git@github.com</span></div><div class="tl"><span class="tok">Hi charaka-dev! You&apos;ve successfully authenticated...</span></div></div></div>
+    </div>
+    <div class="callout ct mt12 small"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div><strong>pbcopy</strong> is macOS&apos;s built-in clipboard tool &mdash; reads stdin and puts it in your clipboard. Like Ctrl+C for the terminal.</div></div>
+  </div>
+  <!-- SSH Linux -->
+  <div class="tab-panel" id="ssh-p-lnx">
+    <div class="grid-2 ga12">
+      <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Step 1 &mdash; Generate &amp; Config</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:11px;"><div class="tl"><span class="tcm"># Generate key (press Enter 2x)</span></div><div class="tl"><span class="tp">$</span><span class="tc"> ssh-keygen <span class="tf">-t</span> ed25519 <span class="tf">-C</span> <span class="ts">"you@email.com"</span> <span class="tf">-f</span> ~/.ssh/github_key</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Tell SSH to use it</span></div><div class="tl"><span class="tp">$</span><span class="tc"> echo <span class="ts">"Host github.com"</span> &gt;&gt; ~/.ssh/config</span></div><div class="tl"><span class="tp">$</span><span class="tc"> echo <span class="ts">"  IdentityFile ~/.ssh/github_key"</span> &gt;&gt; ~/.ssh/config</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Copy public key (X11)</span></div><div class="tl"><span class="tp">$</span><span class="tc"> xclip <span class="tf">-sel</span> clip &lt; ~/.ssh/github_key.pub</span></div></div></div>
+      <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Wayland Alternative &amp; Verify</div></div><div class="tb" style="font-size:11px;"><div class="tl"><span class="tcm"># Wayland (Ubuntu 22.04+, Fedora 38+)</span></div><div class="tl"><span class="tp">$</span><span class="tc"> cat ~/.ssh/github_key.pub | wl-copy</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Check your session type:</span></div><div class="tl"><span class="tp">$</span><span class="tc"> echo $XDG_SESSION_TYPE</span></div><div class="tl"><span class="tout">x11  or  wayland</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Test connection after adding to GitHub</span></div><div class="tl"><span class="tp">$</span><span class="tc"> ssh <span class="tf">-T</span> git@github.com</span></div><div class="tl"><span class="tok">Hi charaka-dev! You&apos;ve successfully authenticated</span></div></div></div>
+    </div>
+    <div class="callout ct mt12 small"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div>Use <strong>xclip</strong> on X11, <strong>wl-copy</strong> on Wayland. Both send the key directly to your clipboard &mdash; no file viewer needed.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- S10 GITHUB CLI -->
+<div class="slide" id="s10" data-n="10">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 3 &mdash; Authentication</div></div>
+<div class="sb row ga28">
+  <div class="col" style="max-width:310px;">
+    <div class="title" style="font-size:26px;">Method 3:<br><span class="hl-v">GitHub CLI</span></div>
+    <div class="subtitle">The interactive guided login flow.</div>
+    <p class="lead mt8">GitHub CLI (<code style="background:rgba(27,42,71,.06);padding:2px 6px;border-radius:4px;">gh</code>) handles authentication through a browser-based interactive flow. Great for getting started quickly.</p>
+    <ol class="steps mt14" style="gap:10px;">
+      <li class="step"><div class="snum" style="background:var(--violet-d);">1</div><div class="scnt"><div class="stitle">Install GitHub CLI</div><div class="sdesc">Download from <strong>cli.github.com</strong></div></div></li>
+      <li class="step"><div class="snum" style="background:var(--violet-d);">2</div><div class="scnt"><div class="stitle">Run the login command</div><div class="scode" style="display:block;margin-top:4px;">gh auth login</div></div></li>
+      <li class="step"><div class="snum" style="background:var(--violet-d);">3</div><div class="scnt"><div class="stitle">Follow the prompts</div><div class="sdesc">Choose GitHub.com &rarr; SSH &rarr; Browser auth</div></div></li>
+    </ol>
+  </div>
+  <div class="col" style="justify-content:center;">
+    <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Interactive Login Flow</div></div><div class="tb" style="font-size:12.5px;"><div class="tl"><span class="tp">$</span><span class="tc"> gh auth login</span></div><div class="tgap"></div><div class="tl"><span style="color:var(--violet);">?</span><span class="tout"> What account do you want to log into?</span></div><div class="tl"><span class="tok">  &rsaquo; GitHub.com</span></div><div class="tgap"></div><div class="tl"><span style="color:var(--violet);">?</span><span class="tout"> Preferred protocol for Git operations?</span></div><div class="tl"><span class="tok">  &rsaquo; SSH</span></div><div class="tgap"></div><div class="tl"><span style="color:var(--violet);">?</span><span class="tout"> How would you like to authenticate?</span></div><div class="tl"><span class="tok">  &rsaquo; Login with a web browser</span></div><div class="tgap"></div><div class="tl"><span class="tout">! First copy your one-time code: <span style="color:var(--gold);font-weight:700;">ABCD-1234</span></span></div><div class="tl"><span class="tout">- Press Enter to open github.com in browser...</span></div><div class="tgap"></div><div class="tl"><span class="tok">Authentication complete. Logged in as charaka-dev</span></div></div></div>
+  </div>
+</div>
+</div>
+
+<!-- S11 CREATE REPO -->
+<div class="slide" id="s11" data-n="11">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 4 &mdash; Core Workflow</div></div>
+<div class="sb row ga28">
+  <div class="col">
+    <div class="title" style="font-size:28px;">Creating a New<br><span class="ag">Repository</span></div>
+    <div class="subtitle">Your project&apos;s home &mdash; on GitHub and locally.</div>
+    <div class="sh3" style="font-size:13px;margin-bottom:9px;">On GitHub (UI)</div>
+    <ol class="steps" style="gap:8px;">
+      <li class="step"><div class="snum" style="background:var(--green);">1</div><div class="scnt"><div class="stitle">Click &ldquo;+&rdquo; &rarr; &ldquo;New repository&rdquo;</div></div></li>
+      <li class="step"><div class="snum" style="background:var(--green);">2</div><div class="scnt"><div class="stitle">Name it &mdash; e.g. <span class="scode">my-first-repo</span></div><div class="sdesc">Lowercase, hyphens &mdash; no spaces</div></div></li>
+      <li class="step"><div class="snum" style="background:var(--green);">3</div><div class="scnt"><div class="stitle">Check &ldquo;Add a README file&rdquo;</div><div class="sdesc">Your repo&apos;s front page &mdash; always include this</div></div></li>
+      <li class="step"><div class="snum" style="background:var(--green);">4</div><div class="scnt"><div class="stitle">Add a .gitignore &mdash; pick your language</div></div></li>
+      <li class="step"><div class="snum" style="background:var(--green);">5</div><div class="scnt"><div class="stitle">Click &ldquo;Create repository&rdquo;</div></div></li>
+    </ol>
+  </div>
+  <div class="col ga12">
+    <div class="sh3" style="font-size:13px;margin-bottom:9px;">Or Initialize Locally</div>
+    <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Terminal</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:12.5px;"><div class="tl"><span class="tcm"># Create and enter project folder</span></div><div class="tl"><span class="tp">$</span><span class="tc"> mkdir my-first-repo &amp;&amp; cd my-first-repo</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Initialize Git tracking</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git init</span></div><div class="tl"><span class="tok">Initialized empty Git repository in .git/</span></div></div></div>
+    <div class="card small" style="background:rgba(74,107,54,.05);border-color:rgba(74,107,54,.2);"><div style="font-size:13px;font-weight:700;margin-bottom:6px;">What is README.md?</div>The first thing visitors see on your repo. Explains the project, how to install and use it. Written in Markdown. Every serious open-source project has one.</div>
+  </div>
+</div>
+</div>
+
+<!-- S12 CLONE -->
+<div class="slide" id="s12" data-n="12">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 4 &mdash; Core Workflow</div></div>
+<div class="sb row ga28">
+  <div class="col" style="max-width:320px;">
+    <div class="title" style="font-size:30px;"><span class="a">Cloning</span> a Repository</div>
+    <div class="subtitle">Download a full copy to your local machine.</div>
+    <p class="lead mt8"><code style="background:rgba(27,42,71,.06);padding:2px 8px;border-radius:4px;">git clone</code> downloads the complete repository &mdash; all history, branches, and files. Local changes stay local until you push.</p>
+    <div class="callout ci mt14 small"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--cyan-d)" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div>Clone via <strong>SSH URL</strong> (starts with <code>git@github.com:</code>) if you&apos;ve set up SSH keys &mdash; no password prompts ever.</div></div>
+  </div>
+  <div class="col ga12" style="justify-content:center;">
+    <div style="display:flex;gap:8px;">
+      <div style="flex:1;padding:9px 13px;background:rgba(27,42,71,.04);border:1.5px solid rgba(27,42,71,.12);border-radius:var(--r-s);"><div style="font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--amber);margin-bottom:4px;">SSH &mdash; RECOMMENDED</div><code style="font-family:var(--ff-code);font-size:11px;">git@github.com:charaka-dev/my-repo.git</code></div>
+      <div style="flex:1;padding:9px 13px;background:rgba(27,42,71,.02);border:1px solid rgba(27,42,71,.08);border-radius:var(--r-s);"><div style="font-size:10.5px;font-weight:700;letter-spacing:.08em;color:rgba(27,42,71,.35);margin-bottom:4px;">HTTPS</div><code style="font-family:var(--ff-code);font-size:11px;color:rgba(27,42,71,.55);">https://github.com/charaka-dev/my-repo.git</code></div>
+    </div>
+    <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Terminal</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:12.5px;"><div class="tl"><span class="tcm"># Clone via SSH</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git clone git@github.com:<span class="ts">charaka-dev/my-first-repo.git</span></span></div><div class="tgap"></div><div class="tl"><span class="tout">Cloning into 'my-first-repo'...</span></div><div class="tl"><span class="tout">remote: Enumerating objects: 3, done.</span></div><div class="tl"><span class="tok">Receiving objects: 100% (3/3), done.</span></div><div class="tgap"></div><div class="tl"><span class="tp">$</span><span class="tc"> cd my-first-repo</span></div></div></div>
+  </div>
+</div>
+</div>
+
+<!-- S13 3-STAGE WORKFLOW -->
+<div class="slide" id="s13" data-n="13">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 4 &mdash; Core Workflow</div></div>
+<div class="sb">
+  <div class="title">The <span class="a">3-Stage</span> Git Workflow</div>
+  <div class="subtitle">Understanding where your changes live at each step.</div>
+  <div style="display:flex;align-items:center;justify-content:center;margin:18px 0;gap:0;flex:1;">
+    <div class="wf-box" style="background:rgba(181,126,220,.1);border:2px solid rgba(181,126,220,.32);">
+      <div style="width:50px;height:50px;border-radius:12px;background:rgba(181,126,220,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--violet-d)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div style="font-family:var(--ff-head);font-size:15px;font-weight:700;color:var(--violet-d);margin-bottom:4px;">Working Directory</div>
+      <div class="small">Where you edit files.<br>Changes are untracked.</div>
+    </div>
+    <div class="wf-arrow">
+      <div class="wf-cmd" style="background:rgba(255,107,53,.08);color:var(--amber);border:1px solid rgba(255,107,53,.2);">git add .</div>
+      <div style="display:flex;align-items:center;"><div style="height:2px;width:52px;background:linear-gradient(90deg,rgba(255,107,53,.3),var(--amber));"></div><div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:10px solid var(--amber);"></div></div>
+    </div>
+    <div class="wf-box" style="background:rgba(255,209,102,.1);border:2px solid rgba(255,209,102,.4);">
+      <div style="width:50px;height:50px;border-radius:12px;background:rgba(255,209,102,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9943A" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+      <div style="font-family:var(--ff-head);font-size:15px;font-weight:700;color:#C9943A;margin-bottom:4px;">Staging Area</div>
+      <div class="small">Snapshot of what goes<br>into the next commit.</div>
+    </div>
+    <div class="wf-arrow">
+      <div class="wf-cmd" style="background:rgba(74,107,54,.08);color:var(--green);border:1px solid rgba(74,107,54,.2);">git commit -m</div>
+      <div style="display:flex;align-items:center;"><div style="height:2px;width:52px;background:linear-gradient(90deg,rgba(74,107,54,.3),var(--green));"></div><div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:10px solid var(--green);"></div></div>
+    </div>
+    <div class="wf-box" style="background:rgba(27,42,71,.06);border:2px solid rgba(27,42,71,.2);">
+      <div style="width:50px;height:50px;border-radius:12px;background:rgba(27,42,71,.08);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg></div>
+      <div style="font-family:var(--ff-head);font-size:15px;font-weight:700;margin-bottom:4px;">Local Repository</div>
+      <div class="small">Permanent record.<br>All commits stored here.</div>
+    </div>
+    <div class="wf-arrow">
+      <div class="wf-cmd" style="background:rgba(112,214,255,.08);color:var(--cyan-d);border:1px solid rgba(112,214,255,.25);">git push</div>
+      <div style="display:flex;align-items:center;"><div style="height:2px;width:52px;background:linear-gradient(90deg,rgba(112,214,255,.3),var(--cyan-d));"></div><div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:10px solid var(--cyan-d);"></div></div>
+    </div>
+    <div class="wf-box" style="background:rgba(74,107,54,.07);border:2px solid rgba(74,107,54,.3);">
+      <div style="width:50px;height:50px;border-radius:12px;background:rgba(74,107,54,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></div>
+      <div style="font-family:var(--ff-head);font-size:15px;font-weight:700;color:var(--green);margin-bottom:4px;">GitHub Remote</div>
+      <div class="small">Online, backed up,<br>shareable with all.</div>
+    </div>
+  </div>
+  <div class="card" style="background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.15);"><div class="dfi ga12"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><div style="font-size:13px;">Think of staging like <strong>packing a suitcase</strong>. Choose exactly which changes go into this trip (commit). Add, remove &mdash; until you zip it up (commit) and check it in (push).</div></div></div>
+</div>
+</div>
+
+<!-- S14 FIRST COMMIT -->
+<div class="slide" id="s14" data-n="14">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 4 &mdash; Core Workflow</div></div>
+<div class="sb row ga24">
+  <div class="col" style="max-width:295px;">
+    <div class="title" style="font-size:27px;">Your<br><span class="a">First Commit</span></div>
+    <div class="subtitle">Write it like a pro from day one.</div>
+    <div class="sh3" style="font-size:13px;margin-bottom:9px;">Conventional Commits Format</div>
+    <div class="dfc" style="gap:5px;">
+      <div class="ctrow" style="background:rgba(74,107,54,.08);border:1px solid rgba(74,107,54,.2);"><span class="cttag" style="color:var(--green);">feat:</span><span class="small">New feature or enhancement</span></div>
+      <div class="ctrow" style="background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.2);"><span class="cttag" style="color:var(--amber);">fix:</span><span class="small">Bug fix</span></div>
+      <div class="ctrow" style="background:rgba(112,214,255,.08);border:1px solid rgba(112,214,255,.22);"><span class="cttag" style="color:var(--cyan-d);">docs:</span><span class="small">Documentation update</span></div>
+      <div class="ctrow" style="background:rgba(181,126,220,.08);border:1px solid rgba(181,126,220,.2);"><span class="cttag" style="color:var(--violet-d);">chore:</span><span class="small">Maintenance, config</span></div>
+      <div class="ctrow" style="background:rgba(27,42,71,.05);border:1px solid rgba(27,42,71,.1);"><span class="cttag" style="">style:</span><span class="small">Formatting, whitespace</span></div>
+    </div>
+  </div>
+  <div class="col ga12" style="justify-content:center;">
+    <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Making Your First Commit</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:12.5px;"><div class="tl"><span class="tcm"># Check what has changed</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git status</span></div><div class="tl"><span class="tout">On branch main</span></div><div class="tl"><span class="terr">Untracked files: README.md, index.html</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Stage all changes</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git add <span class="ts">.</span></span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Commit with a Conventional Commit message</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git commit <span class="tf">-m</span> <span class="ts">"feat: initial project setup with README"</span></span></div><div class="tl"><span class="tok">[main (root-commit) a1b2c3d] feat: initial project setup</span></div><div class="tl"><span class="tok"> 2 files changed, 10 insertions(+)</span></div></div></div>
+    <div style="padding:14px 18px;background:linear-gradient(135deg,rgba(255,209,102,.12),rgba(255,107,53,.08));border:1.5px solid rgba(255,209,102,.4);border-radius:var(--r-s);text-align:center;"><div style="font-family:var(--ff-head);font-size:18px;font-weight:800;margin-bottom:3px;">You just made history &mdash; literally.</div><div class="small">Commit hash <code style="background:rgba(27,42,71,.08);padding:1px 5px;border-radius:3px;">a1b2c3d</code> is a permanent, immutable record in your project&apos;s timeline.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- S15 PUSH -->
+<div class="slide" id="s15" data-n="15">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 4 &mdash; Core Workflow</div></div>
+<div class="sb row ga28">
+  <div class="col" style="max-width:320px;">
+    <div class="title" style="font-size:30px;"><span class="a">Pushing</span> to GitHub</div>
+    <div class="subtitle">Upload your local commits to the cloud.</div>
+    <p class="lead mt8"><code style="background:rgba(27,42,71,.06);padding:2px 7px;border-radius:4px;">git push</code> sends your commits from your local machine to GitHub. Your work is now safe, backed up, and visible to collaborators.</p>
+    <div class="dfc ga10 mt16">
+      <div class="dfi ga12" style="padding:11px 14px;border-radius:var(--r-s);background:rgba(27,42,71,.04);border:1px solid rgba(27,42,71,.1);"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><div><div style="font-size:12px;font-weight:700;">Local Repository</div><div class="small">Your commits live here first</div></div></div>
+      <div style="display:flex;justify-content:center;"><div class="dfc" style="align-items:center;gap:3px;"><div style="font-family:var(--ff-code);font-size:11.5px;color:var(--amber);">git push origin main</div><div style="width:2px;height:18px;background:var(--amber);"></div><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:10px solid var(--amber);"></div></div></div>
+      <div class="dfi ga12" style="padding:11px 14px;border-radius:var(--r-s);background:rgba(74,107,54,.06);border:1.5px solid rgba(74,107,54,.25);"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg><div><div style="font-size:12px;font-weight:700;color:var(--green);">GitHub Remote</div><div class="small">Now visible online</div></div></div>
+    </div>
+  </div>
+  <div class="col ga12" style="justify-content:center;">
+    <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Terminal</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button></div><div class="tb" style="font-size:12.5px;"><div class="tl"><span class="tcm"># First push &mdash; set upstream (-u flag)</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git push <span class="tf">-u</span> origin main</span></div><div class="tgap"></div><div class="tl"><span class="tout">Enumerating objects: 3, done.</span></div><div class="tl"><span class="tout">Writing objects: 100% (3/3), 720 bytes, done.</span></div><div class="tgap"></div><div class="tl"><span class="tok">To git@github.com:charaka-dev/my-first-repo.git</span></div><div class="tl"><span class="tok"> * [new branch]  main &rarr; main</span></div><div class="tl"><span class="tok">Branch &apos;main&apos; set up to track &apos;origin/main&apos;.</span></div><div class="tgap"></div><div class="tl"><span class="tcm"># Every push after that:</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git push</span></div></div></div>
+    <div class="callout ct small"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div>The <code>-u</code> flag sets the default remote branch &mdash; only needed on the first push. After that, plain <code>git push</code> does it.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- S16 CHEAT SHEET -->
+<div class="slide" id="s16" data-n="16">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 5 &mdash; The Big Picture</div></div>
+<div class="sb row ga28">
+  <div class="col" style="max-width:270px;">
+    <div class="title" style="font-size:28px;">Complete<br><span class="ag">Cheat Sheet</span></div>
+    <div class="subtitle">Every command you need, in order.</div>
+    <div class="callout ci mt12 small"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--cyan-d)" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div>This is the <strong>daily developer loop</strong>. After setup: status, add, commit, push. That&apos;s it.</div></div>
+    <div class="callout ct mt12 small"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div>Bookmark this slide &mdash; or copy the terminal block as a reference.</div></div>
+  </div>
+  <div class="col">
+    <div class="term"><div class="th"><div class="tdots"><div class="tdot dr"></div><div class="tdot dy"></div><div class="tdot dg"></div></div><div class="ttitle">Complete Git Workflow Reference</div><button class="tcopy" onclick="cpt(this)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy All</button></div><div class="tb" style="font-size:12px;"><div class="tl"><span class="tcm">## ONE-TIME SETUP</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git config <span class="tf">--global</span> user.name  <span class="ts">"Your Name"</span></span></div><div class="tl"><span class="tp">$</span><span class="tc"> git config <span class="tf">--global</span> user.email <span class="ts">"you@example.com"</span></span></div><div class="tgap"></div><div class="tl"><span class="tcm">## START A PROJECT</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git clone git@github.com:<span class="ts">user/repo.git</span></span></div><div class="tl"><span class="tp">$</span><span class="tc"> cd repo</span></div><div class="tgap"></div><div class="tl"><span class="tcm">## DAILY LOOP</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git status                   <span class="tcm"># see what changed</span></span></div><div class="tl"><span class="tp">$</span><span class="tc"> git add <span class="ts">.</span>                     <span class="tcm"># stage all changes</span></span></div><div class="tl"><span class="tp">$</span><span class="tc"> git commit <span class="tf">-m</span> <span class="ts">"feat: ..."</span>    <span class="tcm"># save snapshot</span></span></div><div class="tl"><span class="tp">$</span><span class="tc"> git push                     <span class="tcm"># upload to GitHub</span></span></div><div class="tgap"></div><div class="tl"><span class="tcm">## SYNC FROM GITHUB</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git pull                     <span class="tcm"># get latest from remote</span></span></div><div class="tgap"></div><div class="tl"><span class="tcm">## USEFUL EXTRAS</span></div><div class="tl"><span class="tp">$</span><span class="tc"> git log <span class="tf">--oneline</span>            <span class="tcm"># see commit history</span></span></div><div class="tl"><span class="tp">$</span><span class="tc"> git diff                     <span class="tcm"># see unstaged changes</span></span></div></div></div>
+  </div>
+</div>
+</div>
+
+<!-- S17 HACKTOBERFEST -->
+<div class="slide" id="s17" data-n="17">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 5 &mdash; The Big Picture</div></div>
+<div class="sb row ga24">
+  <div class="col" style="max-width:350px;">
+    <div class="title" style="font-size:30px;">What is<br><span class="shimmer">Hacktoberfest?</span></div>
+    <div class="subtitle">October = open-source season.</div>
+    <p class="lead mt8">A <strong>month-long global event</strong> every October where developers contribute to open-source projects on GitHub. Sponsored by DigitalOcean.</p>
+    <div class="dfc ga8 mt14">
+      <div class="dfi ga12" style="padding:10px 14px;border-radius:var(--r-s);background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.2);"><div style="font-family:var(--ff-head);font-size:28px;font-weight:900;color:var(--amber);min-width:32px;text-align:center;">4</div><div style="font-size:12.5px;">Pull Requests merged = <strong>digital rewards and swag eligibility</strong></div></div>
+      <div class="dfi ga12" style="padding:10px 14px;border-radius:var(--r-s);background:rgba(74,107,54,.06);border:1px solid rgba(74,107,54,.2);"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" style="flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div style="font-size:12.5px;">Free for everyone &mdash; <strong>beginners explicitly welcome</strong></div></div>
+      <div class="dfi ga12" style="padding:10px 14px;border-radius:var(--r-s);background:rgba(112,214,255,.08);border:1px solid rgba(112,214,255,.2);"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan-d)" stroke-width="2" style="flex-shrink:0;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><div style="font-size:12.5px;">Build a visible contribution record on your profile</div></div>
+    </div>
+  </div>
+  <div class="col ga14">
+    <div class="hcard">
+      <div style="font-family:var(--ff-head);font-size:17px;font-weight:700;margin-bottom:14px;">What you learned today unlocks Hacktoberfest</div>
+      <div class="dfc ga8">
+        <div class="dfi ga10" style="font-size:12.5px;color:rgba(255,255,255,.82);"><div style="width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;"></div><span><strong>Git</strong> &mdash; to track and submit your changes</span></div>
+        <div class="dfi ga10" style="font-size:12.5px;color:rgba(255,255,255,.82);"><div style="width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;"></div><span><strong>GitHub</strong> &mdash; to fork repos and open Pull Requests</span></div>
+        <div class="dfi ga10" style="font-size:12.5px;color:rgba(255,255,255,.82);"><div style="width:7px;height:7px;border-radius:50%;background:var(--cyan);flex-shrink:0;"></div><span><strong>SSH</strong> &mdash; seamless, secure authentication</span></div>
+        <div class="dfi ga10" style="font-size:12.5px;color:rgba(255,255,255,.82);"><div style="width:7px;height:7px;border-radius:50%;background:var(--violet);flex-shrink:0;"></div><span><strong>Conventional Commits</strong> &mdash; professional contribution messages</span></div>
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.42);">You just learned all of them in one session.</div>
+    </div>
+    <div class="card" style="background:rgba(27,42,71,.04);"><div style="font-size:12.5px;"><strong>hacktoberfest.com</strong> &mdash; Registration opens October 1.<br><span class="small">Look for repos tagged <code style="background:rgba(255,107,53,.08);padding:1px 5px;border-radius:3px;">hacktoberfest</code> or issues labeled <code style="background:rgba(74,107,54,.08);padding:1px 5px;border-radius:3px;">good first issue</code>.</span></div></div>
+  </div>
+</div>
+</div>
+
+<!-- S18 ACTION PLAN -->
+<div class="slide" id="s18" data-n="18">
+<div class="sh"><div class="sh-brand"><img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:24px;">JIAT FOSS Community</div><div class="sh-label">Part 5 &mdash; The Big Picture</div></div>
+<div class="sb row ga28">
+  <div class="col" style="max-width:290px;">
+    <div class="title" style="font-size:28px;">Your<br><span class="ag">Action Plan</span></div>
+    <div class="subtitle">Click each item to mark it done!</div>
+    <p class="lead mt8 small">Work through these before the end of tonight. Stuck on any of them? Raise your hand &mdash; we debug together.</p>
+    <div class="card mt-auto" style="background:rgba(27,42,71,.04);"><div style="font-size:12.5px;font-weight:700;margin-bottom:7px;">Stay Connected</div><div class="small">Join the JIAT FOSS Community Discord/WhatsApp for Hacktoberfest prep, upcoming workshops, and open-source project collaborations.</div></div>
+  </div>
+  <div class="col">
+    <ul class="chklist">
+      <li class="chi" onclick="chk(this)"><div class="cicon"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Create a GitHub account at github.com</li>
+      <li class="chi" onclick="chk(this)"><div class="cicon"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Install Git &mdash; verify with <code style="background:rgba(27,42,71,.06);padding:1px 5px;border-radius:3px;font-size:11px;">git --version</code></li>
+      <li class="chi" onclick="chk(this)"><div class="cicon"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Configure global user.name and user.email</li>
+      <li class="chi" onclick="chk(this)"><div class="cicon"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Generate SSH key and add it to GitHub Settings</li>
+      <li class="chi" onclick="chk(this)"><div class="cicon"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Verify SSH &mdash; <code style="background:rgba(27,42,71,.06);padding:1px 5px;border-radius:3px;font-size:11px;">ssh -T git@github.com</code> says &ldquo;Hi!&rdquo;</li>
+      <li class="chi" onclick="chk(this)"><div class="cicon"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Create your first repository on GitHub</li>
+      <li class="chi" onclick="chk(this)"><div class="cicon"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Make your first commit with a Conventional Commit message</li>
+      <li class="chi" onclick="chk(this)"><div class="cicon"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Push to GitHub &mdash; see the green activity on your profile</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- S19 THANK YOU -->
+<div class="slide" id="s19" data-n="19">
+<div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:48px;">
+  <div style="margin-bottom:32px;">
+    <img src="[IMAGE]" alt="JIAT FOSS Logo" style="height:80px; margin-bottom: 20px;">
+  </div>
+  <div class="t-main" style="margin-bottom:24px;">You are Ready for<br><span class="a">Open Source!</span></div>
+  <div style="font-size:18px;color:var(--text-muted);max-width:600px;line-height:1.6;margin-bottom:48px;font-weight:500;">Questions, errors, things that didn&apos;t work &mdash; no question is too basic. The community is here for you right now.</div>
+  <button class="celebrate-btn" onclick="endConfetti()">Celebrate &mdash; Launch Confetti!</button>
+</div>
+</div>
+
+</div></div><!-- /viewport /wrapper -->
+
+<div class="navbar">
+  <button class="nbtn" id="pb" onclick="nav(-1)" disabled><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+  <div class="sdots" id="dots"></div>
+  <button class="nbtn" id="nb" onclick="nav(1)"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+</div>
+<div id="kbhint">Arrow Keys / Space &mdash; Navigate &nbsp;|&nbsp; F &mdash; Fullscreen &nbsp;|&nbsp; C &mdash; Confetti</div>
+
+<script>
+const N=19;let cur=1,busy=false;
+function nav(d){const t=cur+d;if(t<1||t>N||busy)return;busy=true;const from=document.getElementById('s'+cur),to=document.getElementById('s'+t);from.classList.add('exit-l');setTimeout(()=>{from.classList.remove('active','exit-l');to.classList.add('active');cur=t;ui();onEnter(cur);setTimeout(()=>busy=false,420);},340);}
+function goTo(n){if(n===cur||busy)return;busy=true;document.getElementById('s'+cur).classList.add('exit-l');setTimeout(()=>{document.getElementById('s'+cur).classList.remove('active','exit-l');document.getElementById('s'+n).classList.add('active');cur=n;ui();onEnter(cur);setTimeout(()=>busy=false,420);},340);}
+function ui(){document.getElementById('sctr').textContent=cur+' / '+N;document.getElementById('pfill').style.width=((cur/N)*100)+'%';document.querySelectorAll('.sdot').forEach((d,i)=>d.classList.toggle('on',i+1===cur));document.getElementById('pb').disabled=cur===1;document.getElementById('nb').disabled=cur===N;}
+function onEnter(n){if(n===14)setTimeout(()=>burst('achievement'),700);if(n===15)setTimeout(()=>burst('push'),700);if(n===19)setTimeout(()=>endConfetti(),500);}
+const CC=['#FF6B35','#FFD166','#4A6B36','#70D6FF','#B57EDC','#FAF6F0'];
+function burst(type){if(type==='achievement'){confetti({particleCount:90,spread:70,colors:CC,origin:{y:.65}});setTimeout(()=>confetti({particleCount:55,spread:100,colors:CC,angle:60,origin:{x:0,y:.6}}),280);setTimeout(()=>confetti({particleCount:55,spread:100,colors:CC,angle:120,origin:{x:1,y:.6}}),380);}else{confetti({particleCount:75,spread:65,colors:CC,origin:{y:.65}});}}
+function endConfetti(){const end=Date.now()+2600;const frame=()=>{confetti({particleCount:5,angle:60,spread:55,origin:{x:0},colors:CC});confetti({particleCount:5,angle:120,spread:55,origin:{x:1},colors:CC});if(Date.now()<end)requestAnimationFrame(frame);};frame();}
+function sw(grp,panel){document.querySelectorAll('[id^="'+grp+'-t-"]').forEach(b=>b.classList.remove('on'));document.querySelectorAll('[id^="'+grp+'-p-"]').forEach(p=>p.classList.remove('on'));const btn=document.getElementById(grp+'-t-'+panel),pnl=document.getElementById(grp+'-p-'+panel);if(btn)btn.classList.add('on');if(pnl)pnl.classList.add('on');}
+function cpt(btn){const body=btn.closest('.term').querySelector('.tb');const text=body.innerText.trim();navigator.clipboard.writeText(text).then(()=>{const orig=btn.innerHTML;btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied!';btn.style.color='#51E36E';setTimeout(()=>{btn.innerHTML=orig;btn.style.color='';},2000);}).catch(()=>{btn.textContent='Select manually';setTimeout(()=>{btn.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';},2000);});}
+function chk(item){item.classList.toggle('done');}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nav(1);}if(e.key==='ArrowLeft'){e.preventDefault();nav(-1);}if(e.key.toLowerCase()==='f')toggleFS();if(e.key.toLowerCase()==='c')burst('achievement');if(e.key==='Home')goTo(1);if(e.key==='End')goTo(N);});
+function toggleFS(){if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});else document.exitFullscreen();}
+function buildDots(){const c=document.getElementById('dots');for(let i=1;i<=N;i++){const d=document.createElement('div');d.className='sdot'+(i===1?' on':'');d.title='Slide '+i;d.onclick=()=>goTo(i);c.appendChild(d);}}
+function buildPtcls(id){const c=document.getElementById(id);if(!c)return;for(let i=0;i<22;i++){const p=document.createElement('div');p.className='ptcl';const sz=Math.random()*5+2;const colors=['#FF6B35','#FFD166','#70D6FF','#B57EDC','#4A6B36','rgba(250,246,240,0.6)'];p.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+(Math.random()*100)+'%;top:'+(20+Math.random()*65)+'%;background:'+colors[Math.floor(Math.random()*colors.length)]+';animation-delay:'+(Math.random()*5)+'s;animation-duration:'+(4+Math.random()*4)+'s;';c.appendChild(p);}}
+let tx=0;const vp=document.getElementById('vp');vp.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});vp.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)nav(dx<0?1:-1);},{passive:true});
+function scale(){const el=document.getElementById('vp'),W=1200,H=675,sw=window.innerWidth,sh=window.innerHeight-72,s=Math.min(sw/W,sh/H,1.25);el.style.transform='scale('+s+')';el.style.width=W+'px';el.style.height=H+'px';}
+buildDots();buildPtcls('ptcl1');buildPtcls('ptcl19');ui();scale();window.addEventListener('resize',scale);
+</script>
+</body>
+</html>
