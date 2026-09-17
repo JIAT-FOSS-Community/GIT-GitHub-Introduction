@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Sourcery: Git & GitHub Introduction</title>
+  <meta name="description" content="Sorcerer Sessions: Introduction to Git and GitHub by JIAT FOSS Community">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;600&display=swap');
+    
+    :root {
+      --bg: #FAF6F0; /* Parchment Cream */
+      --text-main: #1B2A47; /* Deep Navy Blue */
+      --text-muted: #5C3D24; /* Woodland Brown */
+      --accent: #FF6B35; /* Fiery Amber */
+      --accent-alt: #4A6B36; /* Oak Leaf Green */
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 40px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      text-align: center;
+      border: 1px solid rgba(92, 61, 36, 0.1);
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      color: var(--text-main);
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-family: 'Cinzel', serif;
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-top: 0;
+    }
+
+    p {
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    @media(min-width: 600px) {
+      .links-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg);
+      padding: 30px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+      box-shadow: 0 5px 15px rgba(255, 107, 53, 0.2);
+    }
+
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    .card-title {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .card-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .footer {
+      margin-top: auto;
+      padding: 30px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .footer a {
+      color: var(--accent-alt);
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🪄 Open Sourcery</h1>
+    <h2>Introduction to Git & GitHub</h2>
+    <p>Welcome to our Collaborative Guild! Here you'll find the magical artifacts from our Sorcerer Sessions, hosted by the <strong>JIAT FOSS Community</strong> and presented by Charaka Hashan Amarasekara.</p>
+
+    <div class="links-grid">
+      <a href="presentation.html" class="card">
+        <div class="card-icon">🔮</div>
+        <div class="card-title">Interactive Presentation</div>
+        <div class="card-desc">View the full, rich presentation directly in your browser. Contains all the spells you need!</div>
+      </a>
+      
+      <a href="index_clean.html" class="card">
+        <div class="card-icon">📜</div>
+        <div class="card-title">Clean Presentation</div>
+        <div class="card-desc">A lightweight, clean version of the magical scrolls for faster reading.</div>
+      </a>
+
+      <a href="Installing Git.pptx" class="card" style="grid-column: 1 / -1;">
+        <div class="card-icon">⚔️</div>
+        <div class="card-title">Download Slides (.pptx)</div>
+        <div class="card-desc">Download the slides for offline learning and practice in your own cauldron.</div>
+      </a>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>Made with ❤️ by Charaka Hashan from the <a href="https://github.com/JIAT-FOSS-Community" target="_blank">JIAT FOSS Community</a>.</p>
+    <p>#JIATFOSS #OpenSourcery #FOSS #OpenSource #FOSSLK #JavaInstitute</p>
+  </footer>
+
+</body>
+</html>
